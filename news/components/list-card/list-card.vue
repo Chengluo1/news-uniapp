@@ -1,58 +1,58 @@
 <template>
-	<view>
+	<view @click="open">
 		<!-- 基础卡片 -->
-	<!-- 	<view class="listcard">
+		<view v-if="item.mode === 'base'" class="listcard">
 			<view class="listcard-image">
-				<image src="../../static/logo.png" mode="aspectFill"></image>
+				<image :src=item.cover[0] mode="aspectFill"></image>
 			</view>
 			<view class="listcard-content">
 				<view class="listcard-content_title">
-					<text>内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容</text>
+					<text>{{item.title}}</text>
+					<likes :item="item"></likes>
 				</view>
 				<view class="listcard-content_des">
 					<view class="listcard-content_des-lable">
-						<view class="listcard-content_des-lable-item">前端</view>
+						<view class="listcard-content_des-lable-item">{{item.classify}}</view>
 					</view>
-					<view class="listcard-content_des-browse">浏览人数:120</view>
+					<view class="listcard-content_des-browse">浏览人数:{{item.browse_count}}</view>
 				</view>
 			</view>
-		</view> -->
+		</view>
 		<!-- 多图模式 -->
-		<!-- <view class="listcard mode-column">
+		<view v-if="item.mode === 'column'" class="listcard mode-column">
 			<view class="listcard-content">
 				<view class="listcard-content_title">
-					<text>内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容</text>
+					<text>{{item.title}}</text>
+					<likes :item="item"></likes>
 				</view>
 				<view class="listcard-image">
-					<view v-for="item in 3 " class="listcard-image_item">
-						<image src="../../static/logo.png" mode="aspectFill"></image>
+					<view v-if="index <3" v-for="(item1,index) in item.cover " :key="index" class="listcard-image_item">
+						<image :src="item1" mode="aspectFill"></image>
 					</view>
 				</view>
 				<view class="listcard-content_des">
 					<view class="listcard-content_des-lable">
-						<view class="listcard-content_des-lable-item">前端</view>
+						<view class="listcard-content_des-lable-item">{{item.classify}}</view>
 					</view>
-					<view class="listcard-content_des-browse">浏览人数:120</view>
+					<view class="listcard-content_des-browse">浏览人数:{{item.browse_count}}</view>
 				</view>
 			</view>
-		</view> -->
+		</view>
 		<!-- 大图模式 -->
-		<view class="listcard mode-column">
+		<view v-if="item.mode === 'image'" class="listcard mode-image">
+			<view class="listcard-image">
+					<image :src="item.cover[0]" mode="aspectFill"></image>
+			</view>
 			<view class="listcard-content">
-				<view class="listcard-image">
-					<view  class="listcard-image_item">
-						<image src="../../static/logo.png" mode="aspectFill"></image>
-					</view>
-				</view>
 				<view class="listcard-content_title">
-					<text>内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容</text>
+					<text>{{item.title}}</text>
+					<likes :item="item"></likes>
 				</view>
-
 				<view class="listcard-content_des">
 					<view class="listcard-content_des-lable">
-						<view class="listcard-content_des-lable-item">前端</view>
+						<view class="listcard-content_des-lable-item">{{item.classify}}</view>
 					</view>
-					<view class="listcard-content_des-browse">浏览人数:120</view>
+					<view class="listcard-content_des-browse">浏览人数:{{item.browse_count}}</view>
 				</view>
 			</view>
 		</view>
@@ -61,10 +61,26 @@
 
 <script>
 	export default {
+		props:{
+			item:{
+				type:Object,
+				default(){
+					return []
+				}
+			}
+		},
+		created(){
+		
+		},
 		data() {
 			return {
 				
 			};
+		},
+		methods:{
+			open(){
+				console.log("打开卡片！");
+			}
 		}
 	}
 	
@@ -95,8 +111,10 @@
 			flex-direction: column;
 			padding-left: 10px;
 			width: 100%;
-			align-content:space-between ;
+			// align-content:space-between ;
 			.listcard-content_title{
+				padding-right: 30px;
+				position: relative;
 				font-size: 14px;
 				color: #333;
 				font-weight: 400;
@@ -159,6 +177,22 @@
 			}
 			.listcard-content_des{
 				margin-top: 10px;
+			}
+		}
+		&.mode-image{
+			flex-direction: column;
+			.listcard-image{
+				height: 100px;
+				width: 100%;
+			}
+			.listcard-content{
+				padding-left: 0;
+				margin-top: 10px;
+				.listcard-content_des{
+					display: flex;
+					margin-top: 10px;
+					align-items: center;
+				}
 			}
 		}
 	}

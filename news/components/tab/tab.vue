@@ -21,6 +21,18 @@
 				default(){
 					return []
 				}
+			},
+			tabIndex:{
+				type:Number,
+				default(){
+					return 0
+				}
+			}
+		},
+		//监听 data props值的改变
+		watch:{
+			tabIndex(newVal){
+				this.activeIndex=newVal
 			}
 		},
 		data() {

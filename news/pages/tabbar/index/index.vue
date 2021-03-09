@@ -2,15 +2,13 @@
 	<view class="home">
 		<!-- 自定义组件 -->
 		<navbar></navbar>
-		<tab :list="tabList" @tab="tab"></tab>
-		<list-scroll>
-			<list-card v-for="item in 5"></list-card>
-		</list-scroll>
-	
+		<tab :list="tabList" :tabIndex="tabIndex" @tab="tab" ></tab>
+		<list :tab="tabList" :activeIndex="activeIndex"  @change="change"></list>
 	</view>
 </template>
 
 <script>
+	// import list from '../../../components/list/list.vue'
 	// import navbar from '@/components/navbar/navbar.vue'
 	export default {
 		// components:{
@@ -19,7 +17,9 @@
 		data() {
 			return {
 				title: 'Hello',
-				tabList:[]
+				tabList:[],
+				tabIndex:0,
+				activeIndex:0
 			}
 		},
 		onLoad() {
@@ -34,7 +34,12 @@
 				}).then((res)=>{
 					console.log(res);
 					const{data} = res;
-					this.tabList = data
+					data.unshift({
+						name:'全部'
+					})
+					this.tabList = data;
+					
+					
 				})
 				// uniCloud.callFunction({
 				// 	name:'get_label',
@@ -44,9 +49,17 @@
 				// 	//console.log("here "+this.tabList)
 				// })
 			},
-			tab(data,index){
+			tab({data,index}){
 				// console.log("test00");
 				console.log(data,index);
+				this.activeIndex = index;
+				this.tabIndex=index;
+				console.log("当前activeIndex值",this.activeIndex)
+			},
+			change(current){
+				// console.log("当前swiper的值："+current);
+				this.tabIndex=current;
+				this.activeIndex = current;
 			}
 		}
 	}
@@ -61,7 +74,7 @@
 		display: flex;
 		flex-direction: column;
 		flex:1;
-		border:1px red solid;
+		// border:1px red solid;
 		overflow: hidden;
 	}
 </style>
