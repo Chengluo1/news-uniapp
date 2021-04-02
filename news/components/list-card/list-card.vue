@@ -79,7 +79,18 @@
 		},
 		methods:{
 			open(){
-				console.log("打开卡片！");
+				const item  = this.item
+				
+				this.$emit('click',item)
+				const params = {
+					_id:item._id,
+					title:item.title,
+					browse_count:item.browse_count
+				}
+				// 传参注意长度
+				uni.navigateTo({
+					url:'/pages/task/task-context/task-context?params='+JSON.stringify(params)
+				})
 			}
 		}
 	}

@@ -4,12 +4,19 @@
 			<!-- 状态栏 -->
 			<view :style="{height: statusBarHeight+'px'}"></view>
 			<!-- 导航栏内容 -->
-			<view class="navbar-content" :style="{height:navBarHeight+'px',width:windowWidth+'px'}" >
-				<view class="navbar-search">
+			<view @click.stop="open"  class="navbar-content" :class="{search:isSearch}" :style="{height:navBarHeight+'px',width:windowWidth+'px'}" >
+				<view v-if="isSearch" class="navbar-content__search-icons">
+					<uni-icons type="back" size="22" color="#FFF"></uni-icons>
+				</view>
+				<!-- 非搜索页 -->
+				<view v-if="!isSearch" class="navbar-search">
 					<view class="navbar-search_icon">
 						<text class="iconfont icon-sousuo"></text>
 					</view>
 					<view class="navbar-search_text">uni-app、vue</view>
+				</view>
+				<view v-else class="navbar-search">
+					<input class="navbar-search_text" type="text" v-model="val" placeholder="请输入您要搜索的内容" @input="inputChange"/>
 				</view>
 			</view>
 		</view>
@@ -20,12 +27,19 @@
 <script>
 	import '../../common/css/icons.css';
 	export default {
+		props:{
+			isSearch:{
+				type:Boolean,
+				defaule:false
+			}
+		},
 		data() {
 			return {
 				statusBarHeight:20,
 				navBarHeight:55,
 				h11:45,
-				windowWidth:375
+				windowWidth:375,
+				val:''
 			};
 		},
 		created() {
@@ -46,6 +60,21 @@
 			console.log("windowWidth:"+this.windowWidth)
 			//#endif
 			this.h11=this.navBarHeight+this.statusBarHeight;
+		},
+		methods:{
+			open(){
+				if(this.isSearch){
+					return;
+				}
+				uni.navigateTo({
+					url:"/pages/home-search/home-search"
+				})
+			},
+			inputChange(e){
+				const {value}=e.detail;
+				this.$emit('input',value);
+
+			}
 		}
 	}
 </script>
@@ -89,8 +118,19 @@
 						color: #999;
 					}
 				}
+				&.search{
+					padding-left: 0;
+					
+					.navbar-content__search-icons {
+						margin-left: 10px;
+						margin-right: 10px;
+					}
+					
+					.navbar-search {
+						border-radius: 5px;
+					}
+				}
 			}
-			
 		}
 		
 	}

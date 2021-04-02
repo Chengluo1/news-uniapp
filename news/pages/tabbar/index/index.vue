@@ -38,6 +38,7 @@
 						name:'全部'
 					})
 					this.tabList = data;
+					console.log("here!!!"+JSON.stringify(this.tabList));
 					
 					
 				})
