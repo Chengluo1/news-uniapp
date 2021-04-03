@@ -1,47 +1,114 @@
 <template>
 	<view class="home">
-		<navbar :isSearch="true" @input="change"></navbar>
+		<navbar :isSearch="true" v-model="value" @input="change"></navbar>
 		<view class="home-list">
-			<view class="label-box">
+			<view v-if="is_history" class="label-box">
 				<view class="label-header">
 					<text class="label-title">搜索历史</text>
-					<text class="label-clear">清空</text>
+					<text class="label-clear" @click="clear">清空</text>
 				</view>
 				<view v-if="historyLists.length > 0" class="label-content">
-					<view class="label-content__item" v-for="item in historyLists">{{item.name}}</view>
+					<view class="label-content__item" v-for="item in historyLists" @click="openHistory(item)">{{item.name}}</view>
 				</view>
 				<view v-else class="no-data">
 					没有搜索历史
 				</view>
 			</view> 
-			<button type="default" @click="testBtn">添加历史记录</button>
 			
+			<list-scroll v-else >
+				<uni-load-more v-if="loading" status="loading" iconType="snow"></uni-load-more>
+				<view v-if="searchList.length > 0">
+					<list-card :item="item" v-for="item in searchList" :key="item._id" @click="setHistory"></list-card>
+				</view>
+				<view v-if="searchList.length === 0 && !loading" class="no-data">
+					没有搜索到相关数据
+				</view>
+			</list-scroll>
 		</view>
 	</view>
 </template>
 
 <script>
+
 	import {mapState} from "vuex"
 	export default {
 		data() {
 			return {
 				// historyList:{}
+				is_history:true,
+				searchList:[],
+				value:'',
+				loading:false
 			}
+		},
+		onLoad() {
+			// this.getSearch();
 		},
 		methods: {
 			change(value){
+				
 				console.log("接收的value"+value);
+				if(!value){
+					clearTimeout(this.timer)
+					this.mark = false
+					this.getSearch(value)
+					return
+				}
+				// this.getList(value);
+				if(!this.mark){
+					this.mark = true;//在请求数据中
+					this.timer = setTimeout(()=>{
+						this.mark = false;
+						this.getSearch(value);
+					},1000)
+				}
 			},
-			testBtn(){
+			getSearch(value){
+				if(!value){
+					this.searchList = []
+					this.is_history = true;
+					return
+				}
+				this.is_history = false;
+				this.loading = true
+				this.$api.get_search({
+					value
+				})
+				.then(res=>{
+					console.log(res);
+					const {data} = res;
+					if(data === []){
+						
+					}
+					this.searchList = data;
+					this.loading = false
+				}).catch(()=>{
+					this.loading = false
+				})
+			},
+			setHistory(){
 				console.log("?");
 				this.$store.dispatch('set_history',{
-					name:'test'
+					name:this.value
 				})
+			},
+			openHistory(item){
+				this.value = item.name
+				console.log("value:"+this.value)
+				this.getSearch(this.value)
+				this.is_history = false
+			},
+			clear(){
+				this.$store.dispatch('clearHistory')
+				uni.showToast({
+					title: '清空完成'
+				});
+				console.log(JSON.stringify(this.historyLists))
 			}
 		},
-		computed:{
-			...mapState(["historyLists"])
-		}
+		computed: {
+			...mapState(['historyLists'])
+		},
 	}
 </script>
 

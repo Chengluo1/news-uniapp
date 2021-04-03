@@ -6,7 +6,7 @@
 			<!-- 导航栏内容 -->
 			<view @click.stop="open"  class="navbar-content" :class="{search:isSearch}" :style="{height:navBarHeight+'px',width:windowWidth+'px'}" >
 				<view v-if="isSearch" class="navbar-content__search-icons">
-					<uni-icons type="back" size="22" color="#FFF"></uni-icons>
+					<uni-icons type="back" size="22" color="#FFF" @click="back"></uni-icons>
 				</view>
 				<!-- 非搜索页 -->
 				<view v-if="!isSearch" class="navbar-search">
@@ -31,6 +31,15 @@
 			isSearch:{
 				type:Boolean,
 				defaule:false
+			},
+			value:{
+				type:[String,Number],
+				default:''
+			}
+		},
+		watch:{
+			value(newVal){
+				this.val = newVal
 			}
 		},
 		data() {
@@ -74,6 +83,11 @@
 				const {value}=e.detail;
 				this.$emit('input',value);
 
+			},
+			back(){
+				uni.switchTab({
+					url:'/pages/tabbar/index/index'
+				})
 			}
 		}
 	}
@@ -116,6 +130,7 @@
 					.navbar-search_text{
 						font-size: 14px;
 						color: #999;
+						width: 100%;
 					}
 				}
 				&.search{
